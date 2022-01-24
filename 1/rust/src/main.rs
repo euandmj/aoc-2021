@@ -5,30 +5,55 @@ use std::path::Path;
 fn main() {
     let vec = get_lines("../input.txt");
 
-    let mut incr = 0;
-    let mut decr = 0;
+    println!("received {} lines", vec.len());
+
+    // let result = part1(&vec);
+    let result = part2(&vec);
+
+    println!("got: {} increments.", result);
+}
+
+#[allow(dead_code)]
+fn part1(vec: &Vec<i32>) -> i32 {
+    let mut incr: i32 = 0;
+    let mut _decr: i32 = 0;
     let mut last_depth = vec.first().unwrap();
 
-    println!("received {} lines", vec.len());
     for depth in &vec[1..] {
         if depth > last_depth {
-            incr+=1;
+            incr += 1;
         } else {
-            decr+=1;
+            _decr += 1;
         }
         last_depth = depth;
     }
-    
-    println!("got: {} increments, {} decrements", incr, decr);
+    incr
+}
+
+#[allow(dead_code)]
+fn part2(vec: &Vec<i32>) -> i32 {
+    let mut incr: i32 = 0;
+    let mut _decr: i32 = 0;
+    let mut last_sum = i32::MAX;
+
+    for (i, _) in vec.iter().enumerate() {
+        if i < 2 {
+            continue;
+        }
+        let sum = vec[i] + vec[i - 1] + vec[i - 2];
+
+        if sum > last_sum {
+            incr += 1;
+        }
+        last_sum = sum;
+    }
+    incr
 }
 
 fn get_lines(filename: impl AsRef<Path>) -> Vec<i32> {
-    let file = File::open(filename)
-        .expect("failed to read file");
+    let file = File::open(filename).expect("failed to read file");
     let buf = io::BufReader::new(file);
     buf.lines()
-        .map(|l| -> i32 {
-            l.unwrap().parse::<i32>().unwrap()
-        })
+        .map(|l| -> i32 { l.unwrap().parse::<i32>().unwrap() })
         .collect()
 }
